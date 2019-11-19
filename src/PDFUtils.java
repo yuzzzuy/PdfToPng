@@ -20,7 +20,7 @@ public class PDFUtils {
         //PDF转图片 （单张）
         //pdfToImagePath(filePath);
         //PDF转长图(目前30张以内无压力)
-        pdf2multiImage(filePath,outPath);
+        pdfmultiImage(filePath,outPath);
     }
 
 
@@ -71,7 +71,7 @@ public class PDFUtils {
      * @param outpath
      * @Description pdf转成一张图片
      */
-    private static void pdf2multiImage(String filePath, String outpath) {
+    private static void pdfmultiImage(String filePath, String outpath) {
         try {
             InputStream is = new FileInputStream(filePath);
             PDDocument pdf = PDDocument.load(is);
@@ -85,7 +85,7 @@ public class PDFUtils {
                 BufferedImage image = new PDFRenderer(pdf).renderImageWithDPI(i, 180, ImageType.RGB);
                 piclist.add(image);
             }
-            yPic(piclist, outpath);
+            PicFixY(piclist, outpath);
             is.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,22 +98,11 @@ public class PDFUtils {
      * @param piclist 文件流数组
      * @param outPath 输出路径
      */
-    public static void yPic(List<BufferedImage> piclist, String outPath) {// 纵向处理图片
+    public static void PicFixY(List<BufferedImage> piclist, String outPath) {// 纵向处理图片
         if (piclist == null || piclist.size() <= 0) {
             System.out.println("图片数组为空!");
             return;
         }
-        picjoint(piclist, outPath);
-    }
-
-
-    /**
-     * 将宽度相同的图片，竖向追加在一起 ##注意：宽度必须相同
-     *
-     * @param piclist 文件流数组
-     * @param outPath 输出路径
-     */
-    public static void picjoint(List<BufferedImage> piclist, String outPath) {// 纵向处理图片
         try {
             int height = 0, // 总高度
                     width = 0, // 总宽度
@@ -156,6 +145,8 @@ public class PDFUtils {
             e.printStackTrace();
         }
     }
+
+
 
 
 }
