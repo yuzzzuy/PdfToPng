@@ -12,13 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PDFUtils {
+    private static final String filePath = "d://servlet.pdf";
+    private static final String outPath = "d://1.jpg";
+
     //输出调用
     public static void main(String[] args) {
-        System.out.println(args[0]);
-        System.out.println(args[1]);
-        pdf2multiImage(args[0], args[1]);
+        //PDF转图片 （单张）
+        //pdfToImagePath(filePath);
+        //PDF转长图(目前30张以内无压力)
+        pdf2multiImage(filePath,outPath);
     }
-
 
 
     /**
@@ -49,8 +52,14 @@ public class PDFUtils {
                 imagePath = fileDirectory + "/" + i + ".jpg";
                 ImageIO.write(image, "PNG", new File(imagePath));
                 list.add(imagePath);
+//                百分比显示进度
+//                NumberFormat num = NumberFormat.getInstance();
+//                num.setMaximumFractionDigits(2);
+//                System.out.println("导出图片进度："+(num.format(((float)i/(float)pageCount) *100)+'%'));
+//                文件数显示进度
+                System.out.println("导出图片进度：" + i + '/' + pageCount);
             }
-            doc.close();              //关闭文件,不然该pdf文件会一直被占用。
+            doc.close();//关闭文件,不然该pdf文件会一直被占用。
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,15 +67,19 @@ public class PDFUtils {
     }
 
     /**
-     * @param pdfFile
+     * @param filePath
      * @param outpath
      * @Description pdf转成一张图片
      */
-    private static void pdf2multiImage(String pdfFile, String outpath) {
+    private static void pdf2multiImage(String filePath, String outpath) {
         try {
-            InputStream is = new FileInputStream(pdfFile);
+            InputStream is = new FileInputStream(filePath);
             PDDocument pdf = PDDocument.load(is);
             int actSize = pdf.getNumberOfPages();
+            if (actSize > 30){
+                System.err.println("pdf图片太多,可能导致Java heap space");
+                return;
+            }
             List<BufferedImage> piclist = new ArrayList<BufferedImage>();
             for (int i = 0; i < actSize; i++) {
                 BufferedImage image = new PDFRenderer(pdf).renderImageWithDPI(i, 180, ImageType.RGB);
@@ -90,6 +103,17 @@ public class PDFUtils {
             System.out.println("图片数组为空!");
             return;
         }
+        picjoint(piclist, outPath);
+    }
+
+
+    /**
+     * 将宽度相同的图片，竖向追加在一起 ##注意：宽度必须相同
+     *
+     * @param piclist 文件流数组
+     * @param outPath 输出路径
+     */
+    public static void picjoint(List<BufferedImage> piclist, String outPath) {// 纵向处理图片
         try {
             int height = 0, // 总高度
                     width = 0, // 总宽度
@@ -118,6 +142,13 @@ public class PDFUtils {
                 __height = heightArray[i];
                 if (i != 0) _height += __height; // 计算偏移高度
                 imageResult.setRGB(0, _height, width, __height, imgRGB.get(i), 0, width); // 写入流中
+
+                //                百分比显示进度
+//                NumberFormat num = NumberFormat.getInstance();
+//                num.setMaximumFractionDigits(2);
+//                System.out.println("导出图片进度："+(num.format(((float)i/(float)picNum) *100)+'%'));
+//                文件数显示进度
+                System.out.println("导出图片进度：" + i + '/' + picNum);
             }
             File outFile = new File(outPath);
             ImageIO.write(imageResult, "jpg", outFile);// 写图片
