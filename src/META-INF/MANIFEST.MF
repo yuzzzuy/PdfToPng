@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: libs/commons-logging-1.2.jar libs/fontbox-2.0.15.jar libs/
+ pdfbox-2.0.15.jar
+Main-Class: PDFUtils
+
