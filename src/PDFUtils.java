@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 public class PDFUtils {
     private static final String filePath = "d://servlet.pdf";
     private static final String outPath = "d://1.jpg";
@@ -145,8 +144,4 @@ public class PDFUtils {
             e.printStackTrace();
         }
     }
-
-
-
-
 }
